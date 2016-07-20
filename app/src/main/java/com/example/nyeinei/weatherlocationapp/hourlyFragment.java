@@ -66,11 +66,8 @@ public class hourlyFragment extends Fragment {
                         Log.e("HWFFragment",result.getWeatherList().size()+"");
                         countryname.setText(result.getCity().getName());
                         if(result.getWeatherList().size()==0){
-                            Toast toast= Toast.makeText(getContext(),"No data for hourly forecast for this location!!",Toast.LENGTH_LONG);
-                            toast.show();
-
                             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setMessage("Do you want to see the hourly forecast for other location")
+                            builder.setMessage("No data for hourly forecast for this location!! Do you want to see the hourly forecast for other location")
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             Intent intent = new Intent(getActivity(),SearchActivity.class);

@@ -23,10 +23,11 @@ public class MapInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private Context context;
     //private CurrentWeatherForNearbyCities currentWeatherForNearbyCities;
     private LayoutInflater layoutInflater;
+    double kelvin = 273.15;
     View view;
 
     private ImageView weatherimage;
-    private TextView countryTextView,cloudDescTextView,temperatureTextView,min_temperatureTextView,max_temperatureTextView;
+    private TextView countryTextView,cloudDescTextView,temperatureTextView,min_temperatureTextView,max_temperatureTextView,symbolTextView;
 
     public MapInfoWindowAdapter(Context context)
     {
@@ -49,6 +50,7 @@ public class MapInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         temperatureTextView = (TextView)view.findViewById(R.id.temperatureTextView);
         min_temperatureTextView = (TextView)view.findViewById(R.id.min_temperatureTextView);
         max_temperatureTextView = (TextView)view.findViewById(R.id.max_temperatureTextView);
+        symbolTextView = (TextView)view.findViewById(R.id.celicus_symbol_textView);
 
 
         String info = marker.getSnippet();
@@ -57,12 +59,15 @@ public class MapInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         name = words[0]; description = words [1]; temperature = words[2];
         tem_min = words [3]; tem_max =words[4]; icon = words[5];
 
-
+        double double_temp = Double.parseDouble(temperature);
+        double double_temp_min = Double.parseDouble(tem_min);
+        double double_temp_max = Double.parseDouble(tem_max);
         countryTextView.setText(name);
         cloudDescTextView.setText(description);
-        temperatureTextView.setText(temperature);
-        min_temperatureTextView.setText(tem_min);
-        max_temperatureTextView.setText(tem_max);
+        temperatureTextView.setText(Double.toString(double_temp-kelvin).substring(0,4));
+        symbolTextView.setText((char) 0x00B0 +"C");
+        min_temperatureTextView.setText(Double.toString(double_temp_min-kelvin).substring(0,4) + (char) 0x00B0 +"C"+" /");
+        max_temperatureTextView.setText(Double.toString(double_temp_max-kelvin).substring(0,4) + (char) 0x00B0 +"C");
         //textView3.setText(currentWeatherForNearbyCities.getWeather().);
 
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);

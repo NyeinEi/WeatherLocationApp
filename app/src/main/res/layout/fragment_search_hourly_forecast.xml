@@ -24,7 +24,7 @@
                 />
             <EditText
                 android:id="@+id/cityNameTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="CityName"
                 android:textStyle="bold"
@@ -50,7 +50,7 @@
                 />
             <EditText
                 android:id="@+id/countryCodeTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="Country Code"
                 android:textStyle="bold"
