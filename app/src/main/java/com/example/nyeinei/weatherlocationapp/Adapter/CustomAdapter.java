@@ -3,7 +3,9 @@ package com.example.nyeinei.weatherlocationapp.Adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,8 @@ import android.widget.TextView;
 import com.example.nyeinei.weatherlocationapp.Model.CurrentWeatherForOneLocation;
 import com.example.nyeinei.weatherlocationapp.R;
 
+import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +36,7 @@ public class CustomAdapter extends BaseAdapter {
     double kelvin = 273.15;
     URL url = null;
     Bitmap image = null;
+    ViewHolder v;
 
     public CustomAdapter(ArrayList<CurrentWeatherForOneLocation> data,Context context){
 
@@ -57,8 +62,8 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder v = new ViewHolder();
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        v = new ViewHolder();
 
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.weather_list_row, null);
@@ -79,14 +84,55 @@ public class CustomAdapter extends BaseAdapter {
         v.windTextView.setText(Double.toString(list.get(position).getWind().getSpeed())+" mph");
         v.humidityTextView.setText(Integer.toString(list.get(position).getMaininfo().getHumidity())+"%");
 
-        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
-        try {
-        url = new URL("http://openweathermap.org/img/w/"+list.get(position).getWeather().getIcon()+".png");
-            image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-            v.weather_image.setImageBitmap(image);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+       /* new AsyncTask<Void, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(Void... params) {
+                try {
+                    url = new URL("http://openweathermap.org/img/w/"+list.get(position).getWeather().getIcon()+".png");
+                    image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                } catch (IOException e) {
+                    Log.e("Error",e.getMessage());
+                }
+                return image;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap image) {
+                v.weather_image.setImageBitmap(image);
+            }
+        }.execute();*/
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(100);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+                try {
+                    url = new URL("http://openweathermap.org/img/w/"+list.get(position).getWeather().getIcon()+".png");
+                    image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                v.weather_image.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.weather_image.setImageBitmap(image);
+                    }
+                });
+            }
+        });
+
+//        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
+//        try {
+//        url = new URL("http://openweathermap.org/img/w/"+list.get(position).getWeather().getIcon()+".png");
+//            image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+//            v.weather_image.setImageBitmap(image);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         return convertView;
     }
