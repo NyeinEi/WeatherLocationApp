@@ -15,8 +15,9 @@
             android:layout_height="wrap_content"
             android:text="Country"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:layout_marginTop="10dp"
-            android:textSize="20dp"
+            android:textSize="10dp"
             android:layout_marginLeft="10dp"
             />
 
@@ -24,8 +25,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
                 android:id="@+id/weather_image"/>
@@ -37,7 +38,7 @@
                 android:textStyle="bold"
                 android:layout_toRightOf="@+id/weather_image"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 />
         </RelativeLayout>
 
@@ -77,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:text="Min_Temperature"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:layout_toRightOf="@+id/currenttemplayout"
                 />
 
@@ -87,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:text="Max_Temperature"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:layout_toRightOf="@+id/min_temperatureTextView"
                 />
         </RelativeLayout>

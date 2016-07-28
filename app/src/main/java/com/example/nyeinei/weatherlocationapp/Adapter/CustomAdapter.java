@@ -3,6 +3,7 @@ package com.example.nyeinei.weatherlocationapp.Adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.nyeinei.weatherlocationapp.Helper.ImageLoader;
 import com.example.nyeinei.weatherlocationapp.Model.CurrentWeatherForOneLocation;
 import com.example.nyeinei.weatherlocationapp.R;
 
@@ -22,6 +24,7 @@ import java.io.InterruptedIOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by NyeinEi on 7/18/2016.
@@ -37,12 +40,14 @@ public class CustomAdapter extends BaseAdapter {
     URL url = null;
     Bitmap image = null;
     ViewHolder v;
+    private ImageLoader imgLoader;
 
     public CustomAdapter(ArrayList<CurrentWeatherForOneLocation> data,Context context){
 
         this.list = data;
         this.mContext = context;
         layoutInflater = LayoutInflater.from(context);
+        imgLoader = new ImageLoader(this.mContext);
     }
 
 
@@ -68,6 +73,10 @@ public class CustomAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.weather_list_row, null);
 
+            String hexColor = String.format("#AA%06X", (0xFFFFFF & getRandomColor()));
+
+            convertView.setBackgroundColor(Color.parseColor(hexColor));
+
             v.weather_image = (ImageView) convertView.findViewById(R.id.weather_image);
             v.timeTextView = (TextView)convertView.findViewById(R.id.timeTextView);
             v.tempTextView = (TextView)convertView.findViewById(R.id.tempTextView);
@@ -84,55 +93,8 @@ public class CustomAdapter extends BaseAdapter {
         v.windTextView.setText(Double.toString(list.get(position).getWind().getSpeed())+" mph");
         v.humidityTextView.setText(Integer.toString(list.get(position).getMaininfo().getHumidity())+"%");
 
-       /* new AsyncTask<Void, Void, Bitmap>() {
-            @Override
-            protected Bitmap doInBackground(Void... params) {
-                try {
-                    url = new URL("http://openweathermap.org/img/w/"+list.get(position).getWeather().getIcon()+".png");
-                    image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                } catch (IOException e) {
-                    Log.e("Error",e.getMessage());
-                }
-                return image;
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap image) {
-                v.weather_image.setImageBitmap(image);
-            }
-        }.execute();*/
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(100);
-                }catch (InterruptedException e){
-                    e.printStackTrace();
-                }
-                try {
-                    url = new URL("http://openweathermap.org/img/w/"+list.get(position).getWeather().getIcon()+".png");
-                    image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                v.weather_image.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        v.weather_image.setImageBitmap(image);
-                    }
-                });
-            }
-        });
-
-//        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
-//        try {
-//        url = new URL("http://openweathermap.org/img/w/"+list.get(position).getWeather().getIcon()+".png");
-//            image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-//            v.weather_image.setImageBitmap(image);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        //new loadImageTask().execute("http://openweathermap.org/img/w/"+list.get(position).getWeather().getIcon()+".png");
+        imgLoader.DisplayImage("http://openweathermap.org/img/w/"+list.get(position).getWeather().getIcon()+".png", v.weather_image);
 
         return convertView;
     }
@@ -140,5 +102,15 @@ public class CustomAdapter extends BaseAdapter {
     public static class ViewHolder{
         private TextView timeTextView,tempTextView,windTextView,humidityTextView;
         private ImageView weather_image;
+    }
+
+    public int getRandomColor(){
+        Random rand = new Random();
+        int r = rand.nextInt(300);
+        int g = rand.nextInt(300);
+        int b = rand.nextInt(300);
+
+        int randomColor = Color.rgb(r,g,b);
+        return randomColor;
     }
 }

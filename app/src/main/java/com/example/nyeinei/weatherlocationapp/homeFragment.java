@@ -14,12 +14,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -70,13 +73,46 @@ public class homeFragment extends Fragment {
     Bitmap image = null;
 
     CheckNetworkState checkNetworkState;
+    FragmentTransaction ft;
+    FrameLayout mapcontainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_home, container, false);
-        country = (TextView)view.findViewById(R.id.countryTextView);
+        view = inflater.inflate(R.layout.current_weather_fragment, container, false);
+        mapcontainer = (FrameLayout)view.findViewById(R.id.mapframe);
+        mapFragment mapFragment = new mapFragment();
+        ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.mapframe,mapFragment).commit();
+
+        mapcontainer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getActionMasked();
+
+                Log.e("Motion Event",String.valueOf(action));
+
+
+                /*mapFragment mapFragment = new mapFragment();
+                ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.container,mapFragment).commit();*/
+                return true;
+            }
+        });
+
+        /*mapcontainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("Touching map","hhahha");
+                mapFragment mapFragment = new mapFragment();
+                ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.container,mapFragment).commit();
+            }
+        });*/
+
+
+        /*country = (TextView)view.findViewById(R.id.countryTextView);
         currentTime = (TextView)view.findViewById(R.id.currentTimeTextView);
         temperature = (TextView)view.findViewById(R.id.temperatureTextView);
         cloud = (TextView)view.findViewById(R.id.cloudpercentTextView);
@@ -118,7 +154,6 @@ public class homeFragment extends Fragment {
                         countryname = result.getName();
                         country.setText(countryname);
                         currentTime.setText(getCurrentDate());
-                        // Log.e("LongDaate",result.getDt()+"");
                         temperature.setText(Double.toString(result.getMaininfo().getTemperature()-kelvin).substring(0,4));
                         celicus_symbol_textView.setText((char) 0x00B0 +"C");
                         min_temp.setText(Double.toString(result.getMaininfo().getTemp_min()-kelvin).substring(0,4) + (char) 0x00B0 +"C"+" /");
@@ -166,7 +201,7 @@ public class homeFragment extends Fragment {
         }catch (Exception e){
             Toast toast = Toast.makeText(getContext(),"Cannot get Your Device's Location! Please reboot your device",Toast.LENGTH_LONG);
             toast.show();
-        }
+        }*/
 
         return view;
     }
