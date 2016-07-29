@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -157,6 +158,12 @@ public class mapFragment extends Fragment implements OnMapReadyCallback {
                 .zoom(10)
                 .build();
         map.animateCamera(CameraUpdateFactory.newCameraPosition(c));
+    }
+
+    @Nullable
+    @Override
+    public View getView() {
+        return v;
     }
 }
 

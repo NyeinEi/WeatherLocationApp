@@ -13,9 +13,11 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +25,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,12 +33,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.nyeinei.weatherlocationapp.Adapter.DailyWeatherListAdapter;
 import com.example.nyeinei.weatherlocationapp.Helper.CheckNetworkState;
 import com.example.nyeinei.weatherlocationapp.Model.CurrentWeatherForOneLocation;
+import com.example.nyeinei.weatherlocationapp.Model.DailyWeatherForOneLocation;
+import com.example.nyeinei.weatherlocationapp.Model.DailyWeatherForecastList;
 
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -48,19 +55,12 @@ import java.util.TimeZone;
  */
 public class homeFragment extends Fragment {
     View view;
-    TextView country,currentTime,temperature,min_temp,max_temp,cloud,cloud_desc,wind,humidity,sunrise,sunset,celicus_symbol_textView;
+    TextView title,country,currentTime,temperature,min_temp,max_temp,cloud,cloud_desc,wind,humidity,sunrise,sunset,celicus_symbol_textView;
     TextView showmore,showless;
-    ImageView weatherimage;
+    ImageView weatherimage,logo;
+    Toolbar toolbar;
+
     double kelvin = 273.15;
-
-    protected LocationManager lm;
-    TextView lt, ln;
-    String provider;
-    Location l;
-
-    boolean isGPSEnabled = false;
-    boolean isNetworkEnabled = false;
-    boolean canGetLocation = false;
 
     public static double latitude;
     public static double longtitude;
@@ -72,47 +72,71 @@ public class homeFragment extends Fragment {
     URL url = null;
     Bitmap image = null;
 
-    CheckNetworkState checkNetworkState;
-    FragmentTransaction ft;
-    FrameLayout mapcontainer;
+    GridView dailyforecast;
+    ArrayList<DailyWeatherForecastList> weather_list = null ;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.current_weather_fragment, container, false);
-        mapcontainer = (FrameLayout)view.findViewById(R.id.mapframe);
-        mapFragment mapFragment = new mapFragment();
-        ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.mapframe,mapFragment).commit();
+        dailyforecast = (GridView)view.findViewById(R.id.dailyforecastgrid);
+        title = MainActivity.title;
+        logo = MainActivity.logo;
+        toolbar = MainActivity.toolbar;
+        weather_list = new ArrayList<DailyWeatherForecastList>();
 
-        mapcontainer.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getActionMasked();
+        try{
+            GPSTracker gpsTracker = new GPSTracker(getContext());
+            latitude = gpsTracker.latitude;
+            Log.e("lat",latitude+"");
 
-                Log.e("Motion Event",String.valueOf(action));
+            longtitude = gpsTracker.longitude;
+            Log.e("Long",longtitude+"");
+
+            new AsyncTask<Void, Void, DailyWeatherForOneLocation>() {
+                @Override
+                protected DailyWeatherForOneLocation doInBackground(Void... params) {
+                    DailyWeatherForOneLocation dwf = DailyWeatherForOneLocation.getDailyWeatherForecast(latitude,longtitude);
+                    Log.e("DWF",dwf+"");
+                    return dwf;
+                }
+
+                @Override
+                protected void onPostExecute(DailyWeatherForOneLocation result) {
+                    if(result!=null){
+                        Log.e("DWFFragment",result.getWeatherList()+"");
+
+                        if(result.getWeatherList().size()==0){
+                            Toast toast= Toast.makeText(getContext(),"No data for daily forecast for this location!!",Toast.LENGTH_LONG);
+                            toast.show();
+                        }else {
+                            for(int i=0; i<result.getWeatherList().size();i++){
+                                weather_list.add(result.getWeatherList().get(i));
+                            }
+                            country.setText(result.getCity().getName());
+                            title.setText("Current Location Forecast");
+                            logo.setBackgroundResource(R.drawable.locationicon);
+                            toolbar.setTitle("");
+
+                            Log.e("WeatherListSize",weather_list.size()+"");
+
+                            DailyWeatherListAdapter adapter = new DailyWeatherListAdapter(weather_list,getContext());
+                            dailyforecast.setAdapter(adapter);
+                        }
+                    }else {
+                        Toast toast = Toast.makeText(getContext(),"No internet Connection",Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            }.execute();
+        }catch (Exception e){
+            Toast toast = Toast.makeText(getContext(),"Cannot get Your Device's Location! Please reboot your device",Toast.LENGTH_LONG);
+            toast.show();
+        }
 
 
-                /*mapFragment mapFragment = new mapFragment();
-                ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.container,mapFragment).commit();*/
-                return true;
-            }
-        });
-
-        /*mapcontainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("Touching map","hhahha");
-                mapFragment mapFragment = new mapFragment();
-                ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.container,mapFragment).commit();
-            }
-        });*/
-
-
-        /*country = (TextView)view.findViewById(R.id.countryTextView);
+        country = (TextView)view.findViewById(R.id.countryTextView);
         currentTime = (TextView)view.findViewById(R.id.currentTimeTextView);
         temperature = (TextView)view.findViewById(R.id.temperatureTextView);
         cloud = (TextView)view.findViewById(R.id.cloudpercentTextView);
@@ -160,10 +184,10 @@ public class homeFragment extends Fragment {
                         max_temp.setText(Double.toString(result.getMaininfo().getTemp_max()-kelvin).substring(0,4)+ (char) 0x00B0 +"C");
                         cloud.setText(Double.toString(result.getCloud().getCloudiness())+"%");
                         cloud_desc.setText(result.getWeather().getDescription());
-                        wind.setText(Double.toString(result.getWind().getSpeed())+" mph");
-                        humidity.setText(Double.toString(result.getMaininfo().getHumidity())+"%");
-                        sunrise.setText(convertUTCtoTime(result.getSys().getSunrise()));
-                        sunset.setText(convertUTCtoTime(result.getSys().getSunset()));
+                        //wind.setText(Double.toString(result.getWind().getSpeed())+" mph");
+                        //humidity.setText(Double.toString(result.getMaininfo().getHumidity())+"%");
+                        //sunrise.setText(convertUTCtoTime(result.getSys().getSunrise()));
+                        //sunset.setText(convertUTCtoTime(result.getSys().getSunset()));
 
                         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
                         try {
@@ -175,23 +199,23 @@ public class homeFragment extends Fragment {
                             e.printStackTrace();
                         }
 
-                        showmore.setOnClickListener(new View.OnClickListener() {
+                        /*showmore.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 LinearLayout hiddenlayout = (LinearLayout)view.findViewById(R.id.hiddenlayout);
                                 hiddenlayout.setVisibility(View.VISIBLE);
                                 showmore.setVisibility(View.GONE);
                             }
-                        });
+                        });*/
 
-                        showless.setOnClickListener(new View.OnClickListener() {
+                        /*showless.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 showmore.setVisibility(View.VISIBLE);
                                 LinearLayout hiddenlayout = (LinearLayout)view.findViewById(R.id.hiddenlayout);
                                 hiddenlayout.setVisibility(View.GONE);
                             }
-                        });
+                        });*/
                     }else {
                         Toast toast = Toast.makeText(getContext(),"No internet Connection",Toast.LENGTH_LONG);
                         toast.show();
@@ -201,10 +225,17 @@ public class homeFragment extends Fragment {
         }catch (Exception e){
             Toast toast = Toast.makeText(getContext(),"Cannot get Your Device's Location! Please reboot your device",Toast.LENGTH_LONG);
             toast.show();
-        }*/
+        }
 
         return view;
     }
+
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
 
     private String convertUTCtoTime(double utc) {
         double d = 1.14*100;

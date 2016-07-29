@@ -3,6 +3,7 @@ package com.example.nyeinei.weatherlocationapp.Adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.StrictMode;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.nyeinei.weatherlocationapp.Helper.ImageLoader;
 import com.example.nyeinei.weatherlocationapp.Model.DailyWeatherForecastList;
 import com.example.nyeinei.weatherlocationapp.R;
 
@@ -29,6 +31,7 @@ public class DailyWeatherListAdapter extends BaseAdapter {
     private Context context;
     double kelvin = 273.15;
     private LayoutInflater layoutInflater;
+    private ImageLoader imgLoader;
 //    private TextView timeTextView,tempTextView,rainTextView,cloudTextView;
 //    private ImageView weather_image;
     URL url = null;
@@ -38,6 +41,7 @@ public class DailyWeatherListAdapter extends BaseAdapter {
         this.list = list;
         this.context = context;
         layoutInflater = LayoutInflater.from(context);
+        imgLoader = new ImageLoader(this.context);
     }
 
     @Override
@@ -63,6 +67,8 @@ public class DailyWeatherListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.daily_weather_list_row, null);
 
+            convertView.setBackgroundColor(Color.parseColor("#80dcbafe"));
+
             v.timeTextView = (TextView)convertView.findViewById(R.id.timeTextView);
             v.tempTextView = (TextView)convertView.findViewById(R.id.tempTextView);
             v.rainTextView = (TextView)convertView.findViewById(R.id.rainTextView);
@@ -83,7 +89,7 @@ public class DailyWeatherListAdapter extends BaseAdapter {
         v.rainTextView.setText(list.get(position).getWeather().getDescription());
         v.cloudTextView.setText(Integer.toString(list.get(position).getCloud())+"%");
 
-        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
+        /*StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
         try {
             url = new URL("http://openweathermap.org/img/w/"+list.get(position).getWeather().getIcon()+".png");
             Log.e("ImageURL",url+"");
@@ -91,7 +97,9 @@ public class DailyWeatherListAdapter extends BaseAdapter {
             v.weather_image.setImageBitmap(image);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
+
+        imgLoader.DisplayImage("http://openweathermap.org/img/w/"+list.get(position).getWeather().getIcon()+".png", v.weather_image);
         return convertView;
     }
 

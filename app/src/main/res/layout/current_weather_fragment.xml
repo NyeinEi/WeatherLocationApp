@@ -2,8 +2,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg"
+    android:background="#8087CEEB"
     tools:context="com.example.nyeinei.weatherlocationapp.homeFragment">
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical"-->
+        <!--android:id="@+id/linearLayout">-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/countryTextView"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Country"-->
+            <!--android:textStyle="bold"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:textSize="20dp"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:textColor="@color/white"-->
+            <!--/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/currentTimeTextView"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Current Time"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:layout_marginBottom="10dp"-->
+            <!--/>-->
+    <!--</LinearLayout>-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,37 +41,151 @@
         android:orientation="vertical"
         android:id="@+id/linearLayout">
 
-        <TextView
-            android:id="@+id/countryTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Country"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
-            android:textSize="20dp"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/white"
-            />
 
-        <TextView
-            android:id="@+id/currentTimeTextView"
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/countryTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Country"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:textSize="20dp"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"
+                />
+
+            <TextView
+                android:id="@+id/currentTimeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Current Time"
+                android:textColor="@color/white"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_below="@+id/countryTextView" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/currentTimeTextView">
+                <TextView
+                    android:id="@+id/cloudTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cloud: "
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp" />
+
+                <TextView
+                    android:id="@+id/cloudpercentTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CloudPercent"
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/weather_image"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"/>
+
+            <TextView
+                android:id="@+id/clouddescTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cloud Description"
+                android:textColor="@color/white"
+                android:layout_below="@+id/weather_image"
+                android:layout_marginLeft="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Current Time"
-            android:textColor="@color/white"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            />
+            android:layout_marginBottom="10dp">
+            <RelativeLayout
+                android:id="@+id/currenttemplayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/temperatureTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Temperature"
+                    android:textSize="@dimen/current_temp_textview"
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp" />
+                <TextView
+                    android:id="@+id/celicus_symbol_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="'C"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/white"
+                    android:layout_toRightOf="@+id/temperatureTextView" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/min_temperatureTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Min_Temperature"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:textColor="@color/white"
+                android:layout_toRightOf="@+id/currenttemplayout" />
+
+            <TextView
+                android:id="@+id/max_temperatureTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Max_Temperature"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:textColor="@color/white"
+                android:layout_toRightOf="@+id/min_temperatureTextView" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Daily Weather Forecast"
+                android:textSize="@dimen/current_temp_textview"
+                android:textColor="@color/white"
+                android:background="#AA87CEEB"
+                />
+        </RelativeLayout>
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/mapframe"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
+
+    <GridView
         android:layout_below="@+id/linearLayout"
-        android:layout_centerHorizontal="true"></FrameLayout>
+        android:layout_width="500dp"
+        android:layout_height="400dp"
+        android:id="@+id/dailyforecastgrid"
+        android:columnWidth="90dp"
+        android:numColumns="1"
+        android:verticalSpacing="10dp"
+        android:scrollbars="horizontal">
+    </GridView>
+
 
 </RelativeLayout>
